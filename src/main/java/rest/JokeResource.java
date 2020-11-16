@@ -1,6 +1,7 @@
 package rest;
 
 import DTO.SavedJokeDTO;
+import DTO.SavedJokesDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import entities.SavedJoke;
@@ -10,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.Context;
@@ -39,6 +41,19 @@ public class JokeResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String getJokes() throws IOException, InterruptedException, ExecutionException, TimeoutException {
         return DataFetcher.fetchJokes(es); 
+    }
+    
+    @GET
+    @Path("saved")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getSavedJokes() {
+        EntityManager em = EMF.createEntityManager();
+        try{
+            SavedJokesDTO sJokesDTO = jf.getAllSavedJokes();
+            return gson.toJson(sJokesDTO);
+        }finally{
+            em.close();
+        }
     }
     
     @POST

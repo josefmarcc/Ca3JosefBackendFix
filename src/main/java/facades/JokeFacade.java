@@ -5,6 +5,7 @@
  */
 package facades;
 
+import DTO.SavedJokesDTO;
 import entities.SavedJoke;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -46,6 +47,15 @@ public class JokeFacade {
             em.getTransaction().begin();
             em.persist(sj);
             em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+    
+     public SavedJokesDTO getAllSavedJokes() {
+        EntityManager em = emf.createEntityManager(); 
+        try {
+            return new SavedJokesDTO(em.createQuery("SELECT j from SavedJoke j").getResultList());
         } finally {
             em.close();
         }
